@@ -9,10 +9,16 @@ public class GameController : MonoBehaviour {
     private Vector3 ServerPos = Vector3.zero;
 
     private Vector3 ClientPos = Vector3.zero;
+    private float ClientAngle = 0;
     private bool Running;
+
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
+            serverDeltaTime = 0;
+            ClientPos = Vector3.zero;
+            ServerPos = Vector3.zero;
+            ClientAngle = 0;
             Running = true;
         }
         if (!Running) return;
@@ -33,11 +39,24 @@ public class GameController : MonoBehaviour {
             serverDeltaTime -= 30 * 0.0167f;
             Debug.LogFormat("ServerSnake() - {0}", serverDeltaTime);
 
-            ServerPos += Vector3.up * Speed * 30 * 0.0167f;
+            float ang = ClientAngle + Mathf.PI * 0.5f;
+            Vector3 dir = new Vector3(Mathf.Cos(ang), Mathf.Sin(ang), 0);
+
+            ServerPos += dir * Speed * 30 * 0.0167f;
         }
     }
 
     private void ClientSnake() {
-        ClientPos += Vector3.up * Speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.LeftArrow)) {
+            ClientAngle += 0.1f;
+        }
+        if (Input.GetKey(KeyCode.RightArrow)) {
+            ClientAngle -= 0.1f;
+        }
+
+        float ang = ClientAngle + Mathf.PI * 0.5f;
+        Vector3 dir = new Vector3(Mathf.Cos(ang), Mathf.Sin(ang), 0);
+
+        ClientPos += dir * Speed * Time.deltaTime;
     }
 }
